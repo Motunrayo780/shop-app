@@ -1,11 +1,12 @@
 
+
 import React, { useState, useEffect } from 'react';
-import Nav from './Nav';  // Import the Nav component
+import Nav from './Nav';  
 
 const Main = () => {
-  const [products, setProducts] = useState([]);  // Store fetched products
-  const [cart, setCart] = useState([]);          // Store cart items
-  const [search, setSearch] = useState('');      // Store the search input
+  const [products, setProducts] = useState([]);  
+  const [cart, setCart] = useState([]);          
+  const [search, setSearch] = useState('');     
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -16,12 +17,10 @@ const Main = () => {
     fetchProducts();
   }, []);
 
-  // Filter the products based on the search query
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Function to handle adding items to the cart
   const addToCart = (item) => {
     setCart((prevCart) => {
       const itemExists = prevCart.find((cartItem) => cartItem.id === item.id);
@@ -37,20 +36,20 @@ const Main = () => {
   };
 
   return (
-    <div>
-      {/* Pass search and setSearch to the Nav component */}
+    <div className='p-4'>
       <Nav search={search} setSearch={setSearch} />
 
-      <div className='grid grid-cols-4 justify-between items-center gap-4'>
+
+      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
         {filteredProducts.length > 0 ? (
           filteredProducts.map((item) => (
             <div
               key={item.id}
-              className='w-[250px] h-[350px] bg-slate-400 border-4 rounded-lg translate-x-2'>
+              className='w-full h-[350px] bg-slate-400 border-4 rounded-lg p-2 sm:w-[250px] lg:h-[400px]'>
               <p className='font-size: 1rem;'>{item.title}</p>
 
-              <div className='h-3/6 object-cover rounded-lg flex'>
-                <img className='w-[250px]' src={item.image} alt={item.title} />
+              <div className='h-3/6 object-cover rounded-lg flex justify-center'>
+                <img className='w-[150px] sm:w-[250px]' src={item.image} alt={item.title} />
               </div>
 
               <p className='text-balance'>Price: ${item.price}</p>
@@ -58,26 +57,31 @@ const Main = () => {
 
               <button
                 onClick={() => addToCart(item)}
-                className='w-[200px] h-[40px] bg-slate-200 rounded-lg ml-5 mt-4'>
+                className='w-full sm:w-[200px] h-[40px] bg-slate-200 rounded-lg mt-4 hover:bg-gray-900 transition-colors duration-300'>
                 ADD TO CART
               </button>
+
             </div>
+
+
           ))
         ) : (
           <p>No products found.</p>
         )}
       </div>
 
-      {/* Optional: Display the cart items */}
-      <div className='cart p-4'>
-        <h2>Cart</h2>
+
+      <div className='cart p-4 mt-8'>
+        <h2 className='text-lg font-semibold mb-4'>Cart</h2>
+        
         {cart.length > 0 ? (
           cart.map((cartItem) => (
-            <div key={cartItem.id} className='cart-item'>
-              <p>{cartItem.title}</p>
-              <p>Quantity: {cartItem.quantity}</p>
-              <p>Price: ${cartItem.price * cartItem.quantity}</p>
+            <div key={cartItem.id} className='cart-item mb-2'>
+              <p className='text-sm'>{cartItem.title}</p>
+              <p className='text-sm'>Quantity: {cartItem.quantity}</p>
+              <p className='text-sm'>Price: ${cartItem.price * cartItem.quantity}</p>
             </div>
+
           ))
         ) : (
           <p>The cart is empty.</p>
@@ -88,4 +92,3 @@ const Main = () => {
 };
 
 export default Main;
-
