@@ -1,16 +1,18 @@
+import React from 'react'
 import './App.css'
-// import Nav from './Projectone/Nav'
 import Main from './Projectone/Main'
 import Footer from './Projectone/Footer'
+// import Side from './Projectone/Side'
 
 function App() {
 
   return (
     <>
 
-    {/* <Nav/> */}
       <Main/>
       <Footer/>
+
+      {/* <Side/> */}
 
     </>
   )
