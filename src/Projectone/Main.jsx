@@ -1,12 +1,30 @@
 
-import React, {useEffect, useState } from 'react';
-import Nav from './Nav'
+
+import React, { useEffect, useState } from 'react';
+import Nav from './Nav';
 
 const Main = () => {
-  const [products, setProducts] = useState([]);  
-  const [cart, setCart] = useState([]);          
-  const [search, setSearch] = useState('');     
-  const [isSidebarVisible, setSidebarVisible] = useState(false); // State for sidebar visibility
+  const [products, setProducts] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
+  const [search, setSearch] = useState('');
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
+
+  const [cartItems, setCartItems] = useState([
+    { id: 2, name: 'Product 2', quantity: 99, price: 50 },
+    { id: 2, name: 'Product 3', quantity: 99, price: 20 },
+    { id: 2, name: 'Product 4', quantity: 99, price: 80 },
+  ]);
+
+  // Toggle Sidebar Visibility
+  const toggleSidebar = () => {
+    setSidebarVisible(!isSidebarVisible);
+  };
+
+  // Add item to cart and update cart count
+  const ToCart = (item) => {
+    setCartItems([...cartItems, item]);
+    setCartCount(cartCount + 1);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -17,82 +35,65 @@ const Main = () => {
     fetchProducts();
   }, []);
 
+  // Filter products by search
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const addToCart = (item) => {
-    setCart((prevCart) => {
-      const itemExists = prevCart.find((cartItem) => cartItem.id === item.id);
-      if (itemExists) {
-        return prevCart.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        );
-      }
-      return [...prevCart, { ...item, quantity: 1 }];
-    });
-  };
-
   return (
-    <div className='p-4 relative'>
-      <Nav search={search} setSearch={setSearch} />
+    <div className='relative p-4'>
+      {/* Navbar with Cart Icon and Search */}
+      <Nav search={search} setSearch={setSearch} cartCount={cartCount} toggleSidebar={toggleSidebar} />
 
-      {/* Sidebar */}
-      <div 
-        className={`fixed top-0 right-0 w-[250px] h-full bg-gray-800 text-white transition-transform transform ${
+      {/* Sidebar for Cart Items */}
+      <div
+        className={`fixed top-0 right-0 h-full bg-gray-500 text-white transition-transform transform ${
           isSidebarVisible ? 'translate-x-0' : 'translate-x-full'
-        }`}
-        onMouseEnter={() => setSidebarVisible(true)}
-        onMouseLeave={() => setSidebarVisible(false)}
+        } w-full sm:w-[300px] md:w-[400px]`}
       >
-        <h2 className='p-4 text-lg font-semibold'>Cart</h2>
-        {cart.length > 0 ? (
-          cart.map((cartItem) => (
-            <div key={cartItem.id} className='p-4'>
-              <p>{cartItem.title}</p>
-              <p>Quantity: {cartItem.quantity}</p>
-              <p>Price: ${cartItem.price * cartItem.quantity}</p>
-            </div>
-          ))
-        ) : (
-          <p className='p-4'>The cart is empty.</p>
-        )}
+        {/* Sidebar Header */}
+        <div className="flex justify-between items-center p-4 bg-gray-900">
+          <h2 className="text-lg font-semibold">Cart</h2>
+          <button onClick={toggleSidebar} className="text-white hover:text-gray-400">
+            ✕
+          </button>
+        </div>
+
+        {/* Sidebar Content: Cart Items */}
+        <div className="p-4 space-y-4">
+          {cartItems.length > 0 ? (
+            cartItems.map((item) => (
+              <div key={item.id} className="p-4 border-b border-gray-700">
+                <p className="font-semi">{item.name}</p>
+                <p>Quantity: {item.quantity}</p>
+                <p>Price: ${item.price * item.quantity}</p>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-400">Your cart is empty.</p>
+          )}
+        </div>
       </div>
 
-      {/* Button to hover */}
-      <button
-        className='w-[100px] h-[40px] bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 absolute top-8 right-8'
-        onMouseEnter={() => setSidebarVisible(true)}
-        onMouseLeave={() => setSidebarVisible(false)}
-      >
-        View Cart
-      </button>
-
       {/* Products Display */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((item) => (
             <div
               key={item.id}
-              className='w-full h-[350px] bg-slate-400 border-4 rounded-lg p-2 sm:w-[250px] lg:h-[400px]'
+              className="w-full h-[350px] bg-cyan-900  border-4 rounded-lg p-2 sm:w-[250px] lg:h-[400px]"
             >
-              <p className='font-size: 1rem;'>{item.title}</p>
-
-              <div className='h-3/6 object-cover rounded-lg flex justify-center'>
-                <img className='w-[150px] sm:w-[250px]' src={item.image} alt={item.title} />
+              <p className="text-sd font-[30px]">{item.title}</p>
+              <div className="h-3/6 object-cover rounded-lg flex justify-center">
+                <img className="w-[150px] sm:w-[250px]" src={item.image} alt={item.title} />
               </div>
-
-              <p className='text-balance'>Price: ${item.price}</p>
-              <p className='text-balance font-serif'>Category: {item.category}</p>
-
-              <button
-                onClick={() => addToCart(item)}
-                className='w-full sm:w-[200px] h-[40px] bg-slate-200 rounded-lg mt-4 hover:bg-gray-900 transition-colors duration-300'
-              >
-                ADD TO CART
-              </button>
+              <p className="text-balance">Price: ${item.price}</p>
+              <p className="text-balance font-serif">Category: {item.category}</p>
+              <div className="flex justify-center my-4">
+                <button onClick={() => ToCart(item)} className="px-4 py-2 bg-blue-500 text-white rounded-lg">
+                  Add to Cart
+                </button>
+              </div>
             </div>
           ))
         ) : (
@@ -104,3 +105,4 @@ const Main = () => {
 };
 
 export default Main;
+

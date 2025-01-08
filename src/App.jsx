@@ -6,6 +6,7 @@ import Main from './Projectone/Main';
 import Footer from './Projectone/Footer';
 import OurStory from './pages/OurStory';
 import Careers from './pages/Careers';
+import ParentComponent from './Projectone/ParentComponent';
 // import Side from './Projectone/Side';
 
 function App() {
@@ -23,6 +24,8 @@ function App() {
         </Routes>
 
         {/* Footer */}
+        
+        <ParentComponent/>
         <Footer />
       </div>
     </Router>
